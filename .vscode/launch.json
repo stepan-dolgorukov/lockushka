@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "lockushka",
+      "program": "${workspaceFolder}/lockushka",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build-lockushka"
+    }
+  ]
+}
