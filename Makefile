@@ -1,3 +1,5 @@
+.PHONY: all lockushka
+
 all: lockushka
 
 lockushka:
