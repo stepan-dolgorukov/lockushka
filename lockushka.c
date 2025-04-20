@@ -9,6 +9,7 @@
 #include <sys/file.h>
 
 static volatile sig_atomic_t to_work = true;
+static char name_file_lock[256] = ".lck";
 
 static void handle_interrupt(int number_signal)
 {
@@ -31,7 +32,7 @@ int lock()
 
   while (descriptor_lock == -1)
   {
-    descriptor_lock = open(".lck", O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
+    descriptor_lock = open(name_file_lock, O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
   }
 
   pid_t identifier = getpid();
@@ -58,14 +59,14 @@ int unlock()
 {
   pid_t identifier = getpid();
 
-  if (access(".lck", F_OK) != 0)
+  if (access(name_file_lock, F_OK) != 0)
   {
     fprintf(stderr, "%i: no lock file\n", identifier);
 
     return 1;
   }
 
-  int descriptor_lock = open(".lck", O_RDONLY, S_IRUSR | S_IWUSR);
+  int descriptor_lock = open(name_file_lock, O_RDONLY, S_IRUSR | S_IWUSR);
 
   if (descriptor_lock < 0)
   {
@@ -99,7 +100,7 @@ int unlock()
 
   close(descriptor_lock);
 
-  if (remove(".lck") < 0)
+  if (remove(name_file_lock) < 0)
   {
     fprintf(stderr, "%i: fail to remove lock file\n", identifier);
 
