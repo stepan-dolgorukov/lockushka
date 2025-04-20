@@ -13,7 +13,7 @@ for step in $(seq 1 "${amount_tasks}"); do
 done
 
 identifiers="${identifiers# }"
-sleep "$((60 * 1))"
+sleep "$((60 * 5))"
 
 set -- ${identifiers}
 
