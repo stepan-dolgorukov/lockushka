@@ -1,5 +1,6 @@
-./lockushka.o
-./lockushka
+lockushka.o
+lockushka
 .vscode/
 !.vscode/launch.json
 !.vscode/tasks.json
+.lck
