@@ -152,6 +152,8 @@ int main(int amount_arguments, char* arguments[])
 {
   if (signal(SIGINT, handle_interrupt) == SIG_ERR)
   {
+    fprintf(stderr, "%i: fail to set SIGINT handler\n", getpid());
+
     return 1;
   }
 
