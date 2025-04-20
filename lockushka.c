@@ -110,7 +110,6 @@ int unlock()
 
 int write_report(int counter)
 {
-
   char line_report[32] = {'\0'};
 
   sprintf(line_report, "%i, %i\n", getpid(), counter);
