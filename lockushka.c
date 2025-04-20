@@ -107,6 +107,47 @@ int unlock()
   }
 }
 
+int write_report(int counter)
+{
+
+  char line_report[32] = {'\0'};
+
+  sprintf(line_report, "%i, %i\n", getpid(), counter);
+
+  int descriptor = open("report.text", O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
+
+  if (descriptor < 0)
+  {
+    return 1;
+  }
+
+  if (flock(descriptor, LOCK_EX) < 0)
+  {
+    close(descriptor);
+
+    return 1;
+  }
+
+  if (write(descriptor, line_report, strlen(line_report)) <= 0)
+  {
+    flock(descriptor, LOCK_UN);
+    close(descriptor);
+
+    return 1;
+  }
+
+  if (flock(descriptor, LOCK_UN) == -1)
+  {
+    close(descriptor);
+
+    return 1;
+  }
+
+  close(descriptor);
+
+  return 0;
+}
+
 int main(int amount_arguments, char* arguments[])
 {
   if (signal(SIGINT, handle_interrupt) == SIG_ERR)
@@ -137,20 +178,10 @@ int main(int amount_arguments, char* arguments[])
     ++counter_success_locks;
   }
 
-  char line_report[32] = {'\0'};
-
-  sprintf(line_report, "%i, %i\n", getpid(), counter_success_locks);
-
-  int descriptor = open("report.text", O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
-
-  if (descriptor < 0)
+  if (write_report(counter_success_locks) != 0)
   {
-    return 1;
+    fprintf(stderr, "%i: fail to write report\n", getpid());
   }
-
-  flock(descriptor, LOCK_EX);
-  write(descriptor, line_report, strlen(line_report));
-  flock(descriptor, LOCK_UN);
 
   return 0;
 }
