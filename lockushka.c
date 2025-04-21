@@ -4,6 +4,7 @@
 #include <string.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <getopt.h>
 
 #include <sys/stat.h>
 #include <sys/file.h>
@@ -155,6 +156,44 @@ int main(int amount_arguments, char* arguments[])
     fprintf(stderr, "%i: fail to set SIGINT handler\n", getpid());
 
     return 1;
+  }
+
+  {
+    int position = -1;
+    struct option options[2] = {
+      {.name = "file", .has_arg = 2, .val = 'f'},
+      {}
+    };
+
+    int key = -1;
+
+    do
+    {
+      key = getopt_long(amount_arguments, arguments, "f:", options, &position);
+
+      switch (key)
+      {
+        case 'f':
+          if (optarg == NULL)
+          {
+            continue;
+          }
+
+          if (access(optarg, F_OK) == 0)
+          {
+            fprintf(stderr, "File %s exists\n", optarg);
+
+            return 1;
+          }
+
+          sprintf(name_file_lock, "%s", optarg);
+          break;
+
+        default:
+          break;
+      }
+
+    } while (key > 0);
   }
 
   int counter_success_locks = 0;
